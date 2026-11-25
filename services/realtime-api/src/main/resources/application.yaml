@@ -1,0 +1,28 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: realtime-api
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+  mongodb:
+    uri: ${MONGO_URI:mongodb://127.0.0.1:27017/dockvue}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,mongo,redis
+logging:
+  structured:
+    format:
+      console: logstash

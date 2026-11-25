@@ -1,0 +1,36 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: core-api
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:3306/dockvue?connectionTimeZone=UTC}
+    username: ${MYSQL_USER:dockvue}
+    password: ${MYSQL_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db,redis
+logging:
+  structured:
+    format:
+      console: logstash

@@ -1,0 +1,86 @@
+name: dockvue
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: dockvue
+      MYSQL_USER: dockvue
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?copy .env.example to .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?copy .env.example to .env}
+    volumes: [mysql-data:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent && mysql -u dockvue -p\"$$MYSQL_PASSWORD\" dockvue -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  mongo:
+    image: mongo:8.0
+    volumes: [mongo-data:/data/db]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  redis:
+    image: redis:8.2
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  localstack:
+    image: localstack/localstack:4.12.0
+    environment:
+      SERVICES: s3,sqs
+      AWS_DEFAULT_REGION: ap-northeast-2
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    ports: ["127.0.0.1:4566:4566"]
+    volumes:
+      - ./infra/docker/localstack/init.sh:/etc/localstack/init/ready.d/10-dockvue.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "awslocal s3api head-bucket --bucket dockvue-media && awslocal sqs get-queue-url --queue-name dockvue-media >/dev/null"]
+      interval: 5s
+      timeout: 10s
+      retries: 40
+  core-api:
+    profiles: [core]
+    build:
+      context: .
+      dockerfile: infra/docker/java.Dockerfile
+      args: {SERVICE: core-api}
+    environment:
+      MYSQL_URL: jdbc:mysql://mysql:3306/dockvue?connectionTimeZone=UTC
+      MYSQL_USER: dockvue
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?copy .env.example to .env}
+      REDIS_HOST: redis
+    ports: ["127.0.0.1:8080:8080"]
+    depends_on:
+      mysql: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+  realtime-api:
+    profiles: [core]
+    build:
+      context: .
+      dockerfile: infra/docker/java.Dockerfile
+      args: {SERVICE: realtime-api}
+    environment:
+      MONGO_URI: mongodb://mongo:27017/dockvue
+      REDIS_HOST: redis
+    ports: ["127.0.0.1:8081:8081"]
+    depends_on:
+      mongo: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/actuator/health/readiness"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+volumes:
+  mysql-data:
+  mongo-data:
