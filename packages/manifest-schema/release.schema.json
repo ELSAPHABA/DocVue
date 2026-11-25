@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dockvue.example/schemas/release-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "videoId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "releaseId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "mediaVersionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "releaseVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "releasedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ordinal": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "startMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "endMs": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "service": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]*$"
+                },
+                "platform": {
+                  "enum": [
+                    "linux/amd64",
+                    "linux/arm64"
+                  ]
+                },
+                "transport": {
+                  "enum": [
+                    "registry",
+                    "archive"
+                  ]
+                },
+                "ref": {
+                  "type": "string"
+                },
+                "digest": {
+                  "type": "string",
+                  "pattern": "^sha256:[a-f0-9]{64}$"
+                },
+                "archivePath": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]*$"
+                },
+                "imageId": {
+                  "type": "string",
+                  "pattern": "^sha256:[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "service",
+                "platform",
+                "transport",
+                "ref"
+              ],
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "transport": {
+                        "const": "registry"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "digest"
+                    ]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "transport": {
+                        "const": "archive"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "archivePath",
+                      "imageId"
+                    ]
+                  }
+                }
+              ]
+            },
+            "minItems": 1
+          },
+          "workspace": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]*$"
+          },
+          "compose": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]*$"
+          },
+          "fixtures": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]*$"
+            },
+            "minItems": 0
+          },
+          "harness": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]*$"
+          },
+          "validation": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "service": {
+                "type": "string"
+              },
+              "argv": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "timeoutSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3600
+              }
+            },
+            "required": [
+              "service",
+              "argv",
+              "timeoutSeconds"
+            ]
+          },
+          "resources": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "cpuCores": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "memoryMb": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "diskGb": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "cpuCores",
+              "memoryMb",
+              "diskGb"
+            ]
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]*$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "sizeBytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "path",
+                "sha256",
+                "sizeBytes"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "ordinal",
+          "title",
+          "startMs",
+          "endMs",
+          "images",
+          "workspace",
+          "compose",
+          "fixtures",
+          "harness",
+          "validation",
+          "resources",
+          "files"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 20
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "videoId",
+    "releaseId",
+    "mediaVersionId",
+    "releaseVersion",
+    "repository",
+    "sourceRevision",
+    "releasedAt",
+    "durationMs",
+    "phases"
+  ]
+}

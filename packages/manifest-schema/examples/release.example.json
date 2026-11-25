@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "videoId": "10000000-0000-4000-8000-000000000001",
+  "releaseId": "10000000-0000-4000-8000-000000000002",
+  "mediaVersionId": "10000000-0000-4000-8000-000000000003",
+  "releaseVersion": "1.0.0",
+  "repository": "registry.dockvue.example/videos/10000000-0000-4000-8000-000000000004/10000000-0000-4000-8000-000000000001",
+  "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "releasedAt": "2026-11-26T00:00:00Z",
+  "durationMs": 900000,
+  "phases": [
+    {
+      "id": "10000000-0000-4000-8000-000000000005",
+      "ordinal": 1,
+      "title": "Spring API lab",
+      "startMs": 0,
+      "endMs": 900000,
+      "images": [
+        {
+          "service": "api",
+          "platform": "linux/amd64",
+          "transport": "registry",
+          "ref": "registry.dockvue.example/videos/10000000-0000-4000-8000-000000000004/10000000-0000-4000-8000-000000000001@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      ],
+      "workspace": "phase-01/workspace.tar.gz",
+      "compose": "phase-01/compose.yaml",
+      "fixtures": [],
+      "harness": "phase-01/harness/AGENTS.md",
+      "validation": {
+        "service": "api",
+        "argv": [
+          "./verify.sh"
+        ],
+        "timeoutSeconds": 120
+      },
+      "resources": {
+        "cpuCores": 2,
+        "memoryMb": 2048,
+        "diskGb": 5
+      },
+      "files": [
+        {
+          "path": "phase-01/workspace.tar.gz",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/compose.yaml",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/harness/AGENTS.md",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/harness/CONTEXT.md",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/harness/OBJECTIVES.md",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/harness/TOOLS.md",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/harness/HINTS.md",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        },
+        {
+          "path": "phase-01/harness/VALIDATION.md",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 100
+        }
+      ]
+    }
+  ]
+}
