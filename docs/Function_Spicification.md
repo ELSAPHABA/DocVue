@@ -2,7 +2,9 @@
 
 > 문서 경로: docs/Function_Spicification.md (요청된 파일명 유지)
 >
-> 상태: 설계 초안 · 구현 전 / 버전: 0.1.0 / 기준: 2026-11-21
+> 상태: Phase 00 설계 승인 · 구현 전 / 버전: 0.2.0 / 기준: 2026-11-26
+>
+> 사용자 승인 결정 D00-01~08 및 세부 구현 기준: [Technical_Contracts.md](Technical_Contracts.md). 개발 순서: [Development_Plan.md](Development_Plan.md).
 >
 > 제품명은 **DockVue**이며, GitHub 저장소명 **DocVue**는 그대로 유지한다. 본 문서는 현재 동작을 보증하는 사용 설명서가 아니라 개발 계약과 검증 기준을 정의한다.
 
@@ -114,9 +116,9 @@
 - DV-OCI-02: Phase는 하나 또는 여러 서비스 이미지를 참조할 수 있다. 단일 OCI Repo 안에 이미지별 구분 Tag를 사용하고 발행 시 Digest로 고정한다.
 - DV-OCI-03: Dockerfile/Build Context/Compose는 버전 관리된 Git 원본에서 읽으며, 임의의 라이브 컨테이너 commit을 표준 배포 방식으로 사용하지 않는다.
 - DV-OCI-04: OCI Distribution Registry가 Docker Registry API를 제공하고 S3 드라이버에 레이어/Manifest를 저장한다. S3를 직접 Docker Pull endpoint로 사용할 수 없다.
-- DV-OCI-05: 로컬 PoC에서는 S3에 OCI archive/TAR을 보관해 다운로드 후 docker load 하는 대체 경로를 허용한다. 정식 배포는 Registry Pull을 우선한다.
+- DV-OCI-05: 로컬 PoC에서는 S3에 OCI archive/TAR을 보관해 다운로드 후 docker load 하는 대체 경로를 허용한다. Phase 05 MVP는 archive 방식으로 구현하고 Phase 06부터 Registry Pull을 정식 배포 경로로 사용한다.
 - DV-OCI-06: 동일 레이어 재사용, 큰 이미지 다운로드·재시도·체크섬 검증, Registry Garbage Collection과 참조 보존 정책을 검증한다.
-- DV-OCI-07: 지원 플랫폼(linux/amd64 필수, linux/arm64 권장) 및 최소 CPU/RAM/Disk/Docker Compose 버전을 Manifest에 기록한다.
+- DV-OCI-07: 지원 플랫폼(linux/amd64 필수, linux/arm64는 호환성 검증 후 추가) 및 최소 CPU/RAM/Disk/Docker Compose 버전을 Manifest에 기록한다.
 - DV-OCI-08: Phase별 DB Seed는 별도 Fixture로 관리하며 초기화 순서, 마이그레이션 버전, Volume 정책을 명시한다.
 
 ### 4.5 AI Harness (P0 문서, P1 연동)
@@ -622,3 +624,7 @@ DocVue/
 - 제품 릴리스와 학습 콘텐츠 릴리스는 분리한다(Platform Version vs Video Release Version).
 - 우선순위·범위가 바뀌면 본 명세를 먼저 갱신한다.
 - 기존 저장소 LICENSE의 AGPL-3.0 조항을 검토하고 프로젝트 코드·배포 의무를 준수한다.
+
+## 19. Phase 00 승인 정책
+
+D00-01~08의 확정 사항은 [기술적 계약](Technical_Contracts.md)을 따른다. 초기 DB는 Ubuntu EC2에서 자체 운영하고 관리형 전환은 필요 시 검토한다. 승인된 제작자만 초기 컨테이너 콘텐츠 발행 가능; 동일 영상의 발행된 Phase/Release는 동일 접근 권한, 비공개 정답 및 draft는 staging 격리. Go CLI 및 외부 AI 도구의 Harness 연동을 사용하며 자체 LLM API는 불필요하다. 학습자 실습은 로컬 Docker 전용이며 제작자 빌드/검증 Worker는 별도 격리 운영한다.

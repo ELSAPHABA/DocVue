@@ -1,6 +1,21 @@
-# DockVue 기술적 계약 v0.1
+# DockVue 기술적 계약 v0.2
 
-2026-11-26 · Phase 00 설계 기준안. 사용자 요구사항은 고정, 아래 구현 기본값은 검토 대상이다. 기능명세와 충돌하는 세부 구현은 이 문서와 ADR의 명시적 수정사항을 따른다. 런타임 호환성 테스트와 정확한 패치 pin은 Phase 01에서 수행한다.
+2026-11-26 · Phase 00 설계 승인 완료. D00-01~08 권장안을 사용자가 모두 승인하였다. 후속 개발은 본 기준선을 따른다. 기능명세와 충돌하는 세부 구현은 이 문서와 ADR의 명시적 수정사항을 따른다. 런타임 호환성 테스트와 정확한 패치 pin은 Phase 01에서 수행한다.
+
+## 0. 사용자 승인 결정 (D00-01~08)
+
+| ID | 확정 계약 |
+|---|---|
+| D00-01 | Phase 05 S3 TAR/OCI archive + docker load MVP, Phase 06 S3-backed OCI Distribution Registry |
+| D00-02 | 초기 DB Ubuntu EC2 자체 운영, 필요 시 비용·가용성 근거 및 승인 후 관리형 DB 전환 |
+| D00-03 | 초기 컨테이너 콘텐츠 발행은 승인된 제작자로 제한 |
+| D00-04 | 외부 AI 도구와 Harness 연동; 플랫폼 자체 LLM API 불필요 |
+| D00-05 | Go 기반 크로스 플랫폼 DockVue CLI |
+| D00-06 | linux/amd64 필수, linux/arm64는 호환성 검증 후 추가 |
+| D00-07 | 동일 영상 내 발행된 Phase/Release는 동일 접근 권한; draft/정답 private staging |
+| D00-08 | 사용자 PC Docker/Compose 실습, 서버 측 학습자 코드 실행 제외 |
+
+제작자 빌드/검증용 격리 Worker는 D00-08의 제외 대상이 아니다. AWS 비용 발생 및 리소스 생성은 별도 승인 필요. 계약 변경 시 사용자 검토 및 ADR 갱신.
 
 ## 1. 기술 버전 및 의존성
 | 계층 | 기준 버전/선택 | 이유 및 적용 조건 |
@@ -80,4 +95,4 @@
 - initial caps: 20 phases/video, 1 GiB compressed bundle (media/OCI archive separately), 5 GiB total compressed image archive per phase, 4 CPU/8 GiB memory/20 GiB lab suggested; limits configurable, actual per phase requirements recorded.
 - SLO candidates: API p95 <=300ms under recorded 100 virtual user workload, VOD startup p95 <=3s in defined network, SSE p95 <=1s, clean restore 100% supported matrix, no duplicate published release, tenant isolation 100%. No measurements yet.
 - log correlation traceId/eventId/jobId, JSON, no secrets. Prometheus/Grafana + CloudWatch; alert DLQ>0, outbox age>60s, worker failure, disk>80%; adjust after baseline. backups RPO 24h/RTO 4h initial targets, restore drill before public.
-- technical defaults are proposed; open review decisions: P0 archive fallback vs Registry-first, managed DB cost, trust policy for external creators, exact patch versions, budget/traffic ceiling, supported desktop matrix. No AWS spend/deployment or feature code in Phase 00.
+- D00-01~08 승인 완료. 정확한 patch 및 정식 스키마/빌드 검증(Phase 01), 지원 OS 검증(Phase 08), 실제 AWS 예산/배치/복구 검증(Phase 11)은 미수행. No AWS spend/deployment or feature code in Phase 00.

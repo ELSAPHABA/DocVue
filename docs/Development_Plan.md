@@ -1,12 +1,12 @@
 # DockVue 개발 계획 — Phase 00–15
 
-기준: 2026-11-26 / 상태: Phase 00 설계 기준안 (사용자 검토 대상). 제품 코드 미작성.
+기준: 2026-11-26 / 상태: Phase 00 설계 승인 및 종료, Phase 01 착수 가능(미착수). 제품 코드 미작성.
 상위 제품 요구사항: [기능명세서](Function_Spicification.md). 세부 계약: [Technical Contracts](Technical_Contracts.md).
 여기서 개발 Phase는 영상 내 학습 Phase와 구분한다. 기능 우선순위 P0/P1/P2와도 별개이다.
 
 | 개발 Phase | 구현 범위 | 선행 | 수용 게이트 / 증거 |
 |---|---|---|---|
-| 00 | 버전 정책, ADR, ERD, API, 이벤트, Manifest, 보안 | 없음 | 설계 파일 검토, 미결 사항 확인; 런타임 미검증 |
+| 00 | 버전 정책, ADR, ERD, API, 이벤트, Manifest, 보안 | 없음 | 설계 산출물 작성 및 D00-01~08 사용자 승인 완료; 런타임/정식 스키마 검증 미수행 |
 | 01 | Gradle 멀티 프로젝트, Angular/Vue workspace, Compose, CI, DB 마이그레이션 골격 | 00 | clean clone → 빌드, health, 테스트; lockfile·digest 고정 |
 | 02 | 인증, refresh rotation, tenant/RBAC, 초대, 감사 | 01 | 권한 매트릭스, 타 테넌트 IDOR/토큰 재사용 테스트 |
 | 03 | CMS, 영상·Phase 편집, Vue 검색/진도 UI | 02 | 동시 편집 409/412, 시간 범위, cursor, UI E2E |
@@ -22,6 +22,16 @@
 | 13 | Android Media3, C++ JNI QoE, telemetry | 11 | native/Kotlin 동일 결과, 프로파일·실기기 검증 |
 | 14 | 격리 AngularJS CMS → Angular 점진 전환 | 03,11 | 기능 동등성, hybrid 단계, 최종 의존성 제거 |
 | 15 | 전체 E2E, 성능/장애·보안, 문서/데모 | 12,13,14 | 실제 측정 보고서, 릴리스/운영 승인 |
+
+## Phase 00 종료 기록
+
+- [x] 기능명세 분석, 개발 로드맵 및 기술 계약 작성
+- [x] D00-01~08 권장안 사용자 승인 및 문서 반영 ([확정 계약](Technical_Contracts.md))
+- [ ] Phase 01: 정확한 버전 고정, 빌드 및 정식 OpenAPI/JSON Schema 검증
+- [ ] Phase 08: 지원 OS/아키텍처 실기기 검증
+- [ ] Phase 11: AWS 비용/배치 승인 및 실제 복구 검증
+
+설계 게이트 통과. Phase 01~15 미착수.
 
 ## 개발 운영 규칙
 - AI-DLC: 요구사항 → 설계/대안 → 사용자 검토 → 구현 → 테스트 → 문제 분석 → 문서 → Gate. 명시된 변경만 구현한다.
