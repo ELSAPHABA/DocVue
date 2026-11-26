@@ -142,6 +142,9 @@ public class ContentService {
     @Transactional(isolation=Isolation.READ_COMMITTED)
     public Detail update(String actor,String tenant,String video,long expected,Metadata request,String trace){
         Video v=writeVideo(actor,tenant,video,expected);Metadata m=normalize(request);
+        Long actual=db.query("SELECT m.duration_ms FROM videos v JOIN media_versions m ON m.id=v.current_media_version_id WHERE v.id=? AND m.status='READY'",
+            (r,n)->r.getLong(1),video).stream().findFirst().orElse(null);
+        if(actual!=null&&!actual.equals(m.durationMs()))throw ApiError.bad("MEDIA_DURATION_IMMUTABLE");
         if(m.durationMs()!=null&&phases(video).stream().anyMatch(p->p.endMs()>m.durationMs()))throw ApiError.bad("DURATION_BEFORE_PHASE_END");
         v.apply(m);setLabels(video,m);touch(v);audit(actor,tenant,"VIDEO_UPDATED",video,trace);return detail(row(video));
     }

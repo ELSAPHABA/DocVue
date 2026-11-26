@@ -41,7 +41,8 @@ class IdentitySecurity {
                 .requestMatchers("/actuator/health","/actuator/health/**","/actuator/info","/api/v1/status","/.well-known/jwks.json",
                     "/api/v1/auth/csrf","/api/v1/auth/register","/api/v1/auth/login","/api/v1/auth/refresh","/api/v1/auth/logout",
                     "/api/v1/auth/resend-verification").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.GET,"/api/v1/videos","/api/v1/videos/*","/api/v1/videos/*/phases").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET,"/api/v1/videos","/api/v1/videos/*","/api/v1/videos/*/phases","/api/v1/videos/*/playback","/api/v1/videos/*/stream/**").permitAll()
+                .requestMatchers("/internal/media/jobs/**").permitAll()
                 .anyRequest().authenticated())
             .exceptionHandling(e->e.authenticationEntryPoint((r,s,x)->ApiError.write(r,s,401,"UNAUTHENTICATED"))
                 .accessDeniedHandler((r,s,x)->ApiError.write(r,s,403,"FORBIDDEN")))

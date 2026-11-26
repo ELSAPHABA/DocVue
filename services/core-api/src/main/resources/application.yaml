@@ -32,6 +32,13 @@ spring:
       mail.smtp.timeout: 3000
       mail.smtp.writetimeout: 3000
 dockvue:
+  media:
+    endpoint: ${MEDIA_ENDPOINT:}
+    browser-endpoint: ${MEDIA_BROWSER_ENDPOINT:}
+    region: ${AWS_REGION:ap-northeast-2}
+    worker-token: ${MEDIA_WORKER_TOKEN:}
+    enabled: ${MEDIA_ENABLED:false}
+    playback-key: ${MEDIA_PLAYBACK_KEY:}
   catalog:
     cursor-key: ${CATALOG_CURSOR_KEY:}
   auth:

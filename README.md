@@ -4,7 +4,7 @@
 
 영상의 학습 구간(Phase)마다 실행 가능한 컨테이너 환경과 AI 실습 지침을 연결하는 개발자 교육 플랫폼입니다. 시청자는 원하는 구간의 Docker 환경을 로컬에 복원하고, 자신의 AI 도구로 실습하며 검증 결과를 확인할 수 있습니다.
 
-> **개발 상태: Phase 03 콘텐츠 CMS 및 학습자 포털 구현·로컬 검증 완료** — 인증·RBAC, 영상 메타데이터, Phase 타임라인, 공개 미리보기 검색 및 학습 시작 위치가 동작합니다. 실제 영상 재생·실습 패키지는 후속 구현 목표입니다. [개발 계획](docs/Development_Plan.md) · [확정 기술 계약](docs/Technical_Contracts.md)
+> **개발 상태: Phase 04 VOD 파이프라인 구현·로컬 검증 완료** — 인증·RBAC, CMS, Phase 타임라인, 공개 미리보기, S3 multipart 업로드 재개, SQS/FFmpeg HLS, 영상 탐색과 이어보기가 동작합니다. 실제 AWS CDN 및 실습 패키지/Release는 후속 구현 목표입니다. [개발 계획](docs/Development_Plan.md) · [확정 기술 계약](docs/Technical_Contracts.md)
 
 ## 로컬 개발
 
@@ -13,13 +13,13 @@ Java 21, Node.js 24, Python 3.10+ 및 Docker Compose 필요. Windows에서는 Co
 ~~~powershell
 conda activate HongDev
 if (!(Test-Path .env)) { Copy-Item .env.example .env }
-docker compose --profile core up -d --build --wait
+docker compose --profile core --profile media up -d --build --wait
 npm ci
 python scripts/smoke.py
 python scripts/smoke-frontends.py
 ~~~
 
-`npm run dev:admin` / `npm run dev:learner`는 별도 터미널에서 실행합니다. Windows 포트 예약과 충돌하면 `.env`의 호스트 포트를 조정합니다. 로컬 인증·초대 메일은 Mailpit에서 확인합니다(실제 외부 발송 없음). 이메일 인증과 플랫폼 제작자 승인 후 CMS에서 채널·영상·Phase를 편집하고, 학습자 포털에서 명시적으로 공개한 메타데이터를 탐색할 수 있습니다. [실행·검증](docs/architecture/Phase_01_Bootstrap.md) · [인증](docs/architecture/Phase_02_Identity.md) · [콘텐츠 및 headless E2E](docs/architecture/Phase_03_Content.md) · [트러블슈팅](docs/troubleshooting/).
+`npm run dev:admin` / `npm run dev:learner`는 별도 터미널에서 실행합니다. Windows 포트 예약과 충돌하면 `.env`의 호스트 포트를 조정합니다. 로컬 인증·초대 메일은 Mailpit에서 확인합니다(실제 외부 발송 없음). 이메일 인증과 플랫폼 제작자 승인 후 CMS에서 채널·영상·Phase를 편집하고 영상을 업로드합니다. 변환 완료 및 미리보기 활성화 후 학습자 포털에서 HLS를 재생할 수 있습니다. LocalStack은 개발 전용이며 영구 보관을 보장하지 않습니다. [실행·검증](docs/architecture/Phase_01_Bootstrap.md) · [인증](docs/architecture/Phase_02_Identity.md) · [콘텐츠](docs/architecture/Phase_03_Content.md) · [VOD 및 headless E2E](docs/architecture/Phase_04_VOD.md) · [트러블슈팅](docs/troubleshooting/).
 
 ## 핵심 기능
 

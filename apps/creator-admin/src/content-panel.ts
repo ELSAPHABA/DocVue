@@ -4,9 +4,10 @@ import { Subject, from, of, switchMap, catchError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { browserAuth, Profile, Tenant } from '../../../packages/api-contracts/auth-client';
 import { ContentClient, Detail, Metadata, PhaseInput, Video, emptyPhase, timelineError, errorMessage, Difficulty, Visibility } from '../../../packages/api-contracts/content-client';
+import { MediaPanel } from './media-panel';
 
 @Component({
- selector:'content-panel', imports:[FormsModule,ReactiveFormsModule],
+ selector:'content-panel', imports:[FormsModule,ReactiveFormsModule,MediaPanel],
  templateUrl:'./content-panel.html'
 })
 export class ContentPanel {
@@ -55,6 +56,7 @@ export class ContentPanel {
  private async work(fn:()=>Promise<void>){if(this.busy())return;this.busy.set(true);this.message.set('');try{await fn();this.message.set('저장되었습니다.')}catch(e){this.message.set(errorMessage(e))}finally{this.busy.set(false)}}
  open(v:Video){return this.work(async()=>this.apply(await this.client.get(v.tenantId,v.id)))}
  reload(){const d=this.detail();if(d)return this.open(d.video)}
+ mediaDuration(durationMs:number){const d=this.detail();if(d&&d.video.durationMs!==durationMs)this.message.set('영상 인코딩이 완료되었습니다. 최신 버전을 불러와 타임라인 길이를 확인하세요.')}
  save(){return this.work(async()=>{
    if(this.metadata.invalid)throw new Error('필수 입력과 길이 제한을 확인하세요.');
    const raw=this.metadata.getRawValue();const split=(v:string)=>v.split(',').map(x=>x.trim()).filter(Boolean);

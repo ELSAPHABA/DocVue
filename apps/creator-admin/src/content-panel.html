@@ -1,5 +1,5 @@
 <section class="panel workspace">
-  <div class="section-head"><div><p class="eyebrow">CONTENT STUDIO</p><h2>콘텐츠 관리</h2></div><span class="pill">Phase 03</span></div>
+  <div class="section-head"><div><p class="eyebrow">CONTENT STUDIO</p><h2>콘텐츠 관리</h2></div><span class="pill">Phase 04</span></div>
   @if (!profile()) {<p class="muted">계정 패널에서 로그인하면 콘텐츠를 관리할 수 있습니다.</p>}
   @else if (!profile()?.creatorApproved || !profile()?.emailVerified) {<p class="notice">이메일 인증 및 플랫폼 제작자 승인이 필요합니다. 채널 관리자 권한만으로 콘텐츠를 발행할 수 없습니다.</p>}
   @else {
@@ -29,7 +29,8 @@
           </form>
           @if (detail()) {
             <div class="toolbar"><button (click)="reload()" [disabled]="busy()">최신 버전 불러오기 (편집 내용 교체)</button><button (click)="togglePreview()" [disabled]="busy()">{{detail()?.video?.previewEnabled?'미리보기 숨기기':'메타데이터 미리보기 공개'}}</button></div>
-            <p class="notice">미리보기는 마지막으로 저장된 영상 설명과 Phase 정보만 노출합니다. 비밀정보와 정답을 포함하지 마세요. 영상 재생과 실습 환경은 아직 제공되지 않습니다.</p>
+            <p class="notice">미리보기에는 저장된 영상 설명과 Phase 정보 및 재생 가능한 영상이 표시됩니다. 비밀정보와 정답을 포함하지 마세요. 실습 환경은 후속 단계에서 제공됩니다.</p>
+            <media-panel [owner]="profile()!.id" [tenant]="detail()!.video.tenantId" [video]="detail()!.video.id" (durationChanged)="mediaDuration($event)" />
             <label>상세 링크<input readonly [value]="'/videos/'+detail()?.video?.id"></label>
             <div class="section-head"><h3>학습 Phase 타임라인</h3><button (click)="add()" [disabled]="busy()||phases().length>=20">Phase 추가</button></div>
             <div class="timeline" aria-label="Phase timeline">@for(p of phases();track $index){<span>{{ $index+1 }} · {{p.startMs}}–{{p.endMs}} ms</span>}</div>

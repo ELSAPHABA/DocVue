@@ -44,8 +44,8 @@ jobs:
         with:
           node-version: '24'
       - run: cp .env.example .env
-      - run: docker compose --profile core config --quiet
-      - run: docker compose --profile core up -d --build --wait --wait-timeout 300
+      - run: docker compose --profile core --profile media config --quiet
+      - run: docker compose --profile core --profile media up -d --build --wait --wait-timeout 300
       - run: python3 scripts/smoke.py
       - run: npm ci --no-audit --no-fund
       - run: python3 scripts/smoke-frontends.py
@@ -54,6 +54,12 @@ jobs:
           DOCKVUE_TEST_ALLOW_DB_FIXTURES: '1'
           DOCKVUE_TEST_REDIS_OUTAGE: '1'
       - run: npx playwright install --with-deps chromium
+      - run: |
+          mkdir -p tests/fixtures/generated
+          docker compose exec -T media-worker python - /tmp/sample.mp4 < scripts/generate-media-fixture.py
+          docker compose cp media-worker:/tmp/sample.mp4 tests/fixtures/generated/sample.mp4
+          docker compose exec -T media-worker rm /tmp/sample.mp4
+      - run: docker compose exec -T media-worker python - -v < services/media-worker/test_worker.py
       - run: docker compose exec -T redis redis-cli FLUSHDB
       - run: npx playwright test
         env:
@@ -61,12 +67,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-phase03
+          name: playwright-phase04
           path: |
             playwright-report/
             test-results/
           retention-days: 7
       - if: failure()
-        run: docker compose --profile core logs --no-color --tail 200
+        run: docker compose --profile core --profile media logs --no-color --tail 200
       - if: always()
-        run: docker compose --profile core down -v --remove-orphans
+        run: docker compose --profile core --profile media down -v --remove-orphans

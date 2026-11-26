@@ -9,7 +9,7 @@ const creatorEmail='creator-'+uid+'@example.invalid', learnerEmail='learner-'+ui
 const metadata=(name:string,visibility='PUBLIC')=>({title:name,description:'Reproducible backend training',visibility,difficulty:'BEGINNER',durationMs:120000,tags:['backend'],stack:['docker','spring']});
 const phase=(name:string,startMs=0,endMs=60000)=>({title:name,startMs,endMs,objective:'Understand services',prerequisites:'Docker',estimatedMinutes:10,startState:'Starter project',completionCriteria:'Tests pass'});
 async function fixture(sql:string){
- if(process.env.DOCKVUE_TEST_ALLOW_DB_FIXTURES!=='1'||(project!=='dockvue-phase03-test'&&process.env.CI!=='true'))throw new Error('Refusing fixture outside disposable test stack');
+ if(process.env.DOCKVUE_TEST_ALLOW_DB_FIXTURES!=='1'||(!['dockvue-phase03-test','dockvue-phase04-test'].includes(project)&&process.env.CI!=='true'))throw new Error('Refusing fixture outside disposable test stack');
  if(process.env.DV_INTERNAL_CORE_URL){
    const db=await mysql.createConnection({host:'mysql',user:'dockvue',password:process.env.MYSQL_PASSWORD,database:'dockvue',connectTimeout:5000});
    try{const [rows]=await db.query(sql);return Array.isArray(rows)?rows.map(row=>Object.values(row).join('\t')).join('\n'):''}

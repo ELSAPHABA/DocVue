@@ -167,3 +167,4 @@ hls-output/
 **/hls-output/
 !tests/fixtures/media/
 !tests/fixtures/media/**
+tests/fixtures/generated/

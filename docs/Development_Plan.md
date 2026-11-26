@@ -1,6 +1,6 @@
 # DockVue 개발 계획 — Phase 00–15
 
-기준: 2026-11-26 / 상태: Phase 00 승인, Phase 01–02 구현·CI 검증 완료, Phase 03 구현 및 Docker 내부 headless E2E 검증 완료. Phase 04 미착수.
+기준: 2026-11-26 / 상태: Phase 00 승인, Phase 01–03 구현·CI 검증 완료, Phase 04 구현 및 Docker 내부 headless E2E 검증 완료. Phase 05 미착수.
 상위 제품 요구사항: [기능명세서](Function_Spicification.md). 세부 계약: [Technical Contracts](Technical_Contracts.md).
 여기서 개발 Phase는 영상 내 학습 Phase와 구분한다. 기능 우선순위 P0/P1/P2와도 별개이다.
 
@@ -51,7 +51,17 @@ Phase 01 로컬 게이트 및 GitHub Actions 4/4 통과. Phase 02 로컬 게이�
 - [x] 실제 MySQL EXPLAIN, 1440px/390px 화면 캡처, Windows 연결 reset 장애 기록
 - [x] [콘텐츠 설계](architecture/Phase_03_Content.md), [ADR-0007](adr/0007-content-preview-and-concurrency.md), [TS-03](troubleshooting/TS-03-content-query-and-browser-transport.md)
 
-Phase 03 로컬 기능 검증 완료; Windows 호스트 전체 E2E는 연결 reset으로 실패했으므로 Docker 내부 검증과 구별한다. 최종 커밋 CI는 별도 확인. Phase 04–15 미착수; 실제 미디어/Release는 후속 단계, AWS 비용 및 배포는 별도 승인.
+Phase 03 로컬 기능 검증 및 [GitHub Actions 4/4](https://github.com/ELSAPHABA/DocVue/actions/runs/45765529884) 완료; Windows 호스트 전체 E2E는 연결 reset으로 실패했으므로 Docker 내부 검증과 구별한다.
+
+## Phase 04 종료 기록
+
+- [x] V4 migration, S3 multipart 세션 및 재개, 파트/전체 해시 검증, job/outbox, fencing/lease
+- [x] FFmpeg 7.1.5 격리 Worker, HLS, CMS 업로드 UI 및 학습자 재생/탐색/이어보기
+- [x] Docker 내부 Chromium headless 실제 17 MiB multipart 및 360/720p 재생 E2E, 콘텐츠 회귀, Worker 12개 테스트, 실제 SQS 완료 메시지 재전송
+- [x] [VOD 구현 및 검증](architecture/Phase_04_VOD.md), [ADR-0008](adr/0008-vod-outbox-and-fencing.md), [TS-04](troubleshooting/TS-04-vod-duplicate-delivery.md)
+- [ ] 실제 AWS S3/IAM/OAC/CloudFront private CDN (Phase 11 승인/비용/보안 게이트), Release 고정 재생(Phase 05–07)
+
+Phase 04 로컬 게이트 완료. 최종 CI는 해당 커밋 Actions에서 확인한다. Phase 05–15 미착수. Windows 호스트 E2E 전체는 이번 단계에서 재시도하지 않았으며 Docker 내부에서 headless 검증했다.
 
 ## 개발 운영 규칙
 - AI-DLC: 요구사항 → 설계/대안 → 사용자 검토 → 구현 → 테스트 → 문제 분석 → 문서 → Gate. 명시된 변경만 구현한다.

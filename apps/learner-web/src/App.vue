@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import AuthPanel from './AuthPanel.vue';
+import MediaPlayer from './MediaPlayer.vue';
 import { browserAuth, type Profile } from '../../../packages/api-contracts/auth-client';
 import { ContentClient, type Video, type Detail, type PreviewProgress, errorMessage } from '../../../packages/api-contracts/content-client';
 const api=new ContentClient(browserAuth);
 const profile=ref<Profile|null>(null), items=ref<Video[]>([]), next=ref<string|null>(null), detail=ref<Detail|null>(null);
 const currentId=ref<string|undefined>();
+const mediaPlayer=ref<InstanceType<typeof MediaPlayer>|null>(null);
 const progress=ref<PreviewProgress|null>(null),message=ref(''),busy=ref(false),loading=ref(false);
 const q=ref(''),tag=ref(''),stack=ref(''),difficulty=ref('');
 let queryController:AbortController|undefined, detailController:AbortController|undefined, timer:ReturnType<typeof setTimeout>|undefined;
@@ -40,14 +42,14 @@ onBeforeUnmount(()=>{window.removeEventListener('popstate',navigate);queryContro
 <template>
   <header class="topbar"><div class="brand"><span class="logo">DV</span><span>DockVue <small>Learn</small></span></div><span class="pill">Learning workspace</span></header>
   <main class="shell">
-    <div class="hero"><p class="eyebrow">DOCKVUE / LEARN</p><h1>보고, 실습하고, 이해하세요.</h1><p>영상과 재현 가능한 개발 환경이 연결되는 학습 플랫폼. 지금은 학습 콘텐츠 미리보기를 제공합니다.</p></div>
+    <div class="hero"><p class="eyebrow">DOCKVUE / LEARN</p><h1>보고, 실습하고, 이해하세요.</h1><p>영상과 재현 가능한 개발 환경이 연결되는 학습 플랫폼. 학습 영상 및 콘텐츠 미리보기를 제공합니다.</p></div>
     <div class="studio-grid">
       <section class="panel">
         <div v-if="currentId" class="toolbar"><button @click="back()">← 콘텐츠 탐색</button></div>
         <template v-if="detail">
           <p class="eyebrow">{{detail.video.channel}}</p><h2>{{detail.video.title}}</h2>
           <div class="labels"><span class="pill">{{detail.video.difficulty}}</span><span class="pill">{{detail.video.visibility}}</span><span class="pill">메타데이터 미리보기</span></div>
-          <div class="preview-box"><strong>영상 재생 준비 중</strong><p>VOD 업로드와 실습 패키지는 후속 개발 단계에서 제공됩니다.</p></div>
+          <MediaPlayer ref="mediaPlayer" :key="detail.video.id+':'+(profile?.id??'guest')" :video-id="detail.video.id" :authenticated="!!profile" :phases="detail.phases" />
           <p style="white-space:pre-wrap;overflow-wrap:anywhere">{{detail.video.description}}</p>
           <div class="labels"><span class="pill" v-for="s in [...new Set([...detail.video.stack,...detail.video.tags])]" :key="s">{{s}}</span></div>
           <h3 style="margin-top:22px">학습 Phase · {{detail.phases.length}}개</h3>
@@ -57,6 +59,7 @@ onBeforeUnmount(()=>{window.removeEventListener('popstate',navigate);queryContro
             <p v-if="p.prerequisites">선수 지식: {{p.prerequisites}}</p><p v-if="p.startState">시작 상태: {{p.startState}}</p><p v-if="p.completionCriteria">완료 기준: {{p.completionCriteria}}</p>
             <button v-if="profile" @click="selectPhase(p.id)" :disabled="busy">{{progress?.phaseId===p.id&&!progress?.stale?'시작 위치 저장됨':'학습 시작 위치 저장'}}</button>
             <p v-else class="muted">로그인하면 학습 시작 위치를 저장할 수 있습니다.</p>
+            <button v-if="mediaPlayer?.playback" @click="mediaPlayer.seek(p.startMs)" :disabled="p.startMs>=mediaPlayer.playback.durationMs">이 구간 재생 위치로 이동</button>
           </article>
         </template>
         <template v-else-if="!currentId">
