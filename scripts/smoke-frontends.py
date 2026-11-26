@@ -40,6 +40,9 @@ def main():
                         assert response.status == 200
                     with urllib.request.urlopen(base + '/api/v1/status', timeout=5) as response:
                         assert json.load(response) == {'service': 'core-api', 'phase': '01'}
+                    with urllib.request.urlopen(base + '/api/v1/auth/csrf', timeout=5) as response:
+                        assert json.load(response)['token']
+                        assert 'DV_CSRF=' in response.headers.get('Set-Cookie','')
                     if name == 'admin':
                         with urllib.request.urlopen(base + '/realtime-health', timeout=5) as response:
                             assert json.load(response)['status'] == 'UP'

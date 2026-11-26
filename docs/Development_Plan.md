@@ -1,6 +1,6 @@
 # DockVue 개발 계획 — Phase 00–15
 
-기준: 2026-11-26 / 상태: Phase 00 승인 및 Phase 01 개발 환경 구현·로컬 검증 완료. Phase 02 미착수.
+기준: 2026-11-26 / 상태: Phase 00 승인, Phase 01 구현·CI 검증 완료, Phase 02 구현·로컬 통합 검증 완료. Phase 03 미착수.
 상위 제품 요구사항: [기능명세서](Function_Spicification.md). 세부 계약: [Technical Contracts](Technical_Contracts.md).
 여기서 개발 Phase는 영상 내 학습 Phase와 구분한다. 기능 우선순위 P0/P1/P2와도 별개이다.
 
@@ -41,7 +41,7 @@
 - [x] 로컬 Docker 통합 smoke, 개발 서버 API proxy 및 포트 충돌 해결
 - [x] 재현 절차와 실제 트러블슈팅 기록: [Bootstrap](architecture/Phase_01_Bootstrap.md), [TS-01](troubleshooting/TS-01-windows-port-exclusion.md)
 
-Phase 01 로컬 게이트 통과. 최종 변경의 GitHub Actions 결과는 해당 커밋에서 독립적으로 확인한다. Phase 02~15 미착수; 후속 기능 및 AWS 자원 생성은 승인된 개발 범위에 따라 진행한다.
+Phase 01 로컬 게이트 및 GitHub Actions 4/4 통과. Phase 02 로컬 게이트 통과(인증·인가 통합 11개 시나리오 그룹 및 Redis 장애 검증). 새 커밋의 GitHub Actions 결과는 별도로 확인한다. Phase 03~15 미착수; 후속 기능 및 AWS 자원 생성은 승인된 개발 범위에 따라 진행한다. [Phase 02 검증 및 제한](architecture/Phase_02_Identity.md).
 
 ## 개발 운영 규칙
 - AI-DLC: 요구사항 → 설계/대안 → 사용자 검토 → 구현 → 테스트 → 문제 분석 → 문서 → Gate. 명시된 변경만 구현한다.

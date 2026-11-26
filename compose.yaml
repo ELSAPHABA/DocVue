@@ -54,15 +54,25 @@ services:
       MYSQL_USER: dockvue
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?copy .env.example to .env}
       REDIS_HOST: redis
+      AUTH_DEV: 'true'
+      AUTH_SECURE_COOKIE: 'false'
+      AUTH_ORIGINS: http://127.0.0.1:${CORE_HOST_PORT:-8080},http://127.0.0.1:${ADMIN_HOST_PORT:-4200},http://127.0.0.1:${LEARNER_HOST_PORT:-5173},http://localhost:${CORE_HOST_PORT:-8080},http://localhost:${ADMIN_HOST_PORT:-4200},http://localhost:${LEARNER_HOST_PORT:-5173}
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
     ports: ["127.0.0.1:${CORE_HOST_PORT:-8080}:8080"]
     depends_on:
       mysql: {condition: service_healthy}
       redis: {condition: service_healthy}
+      mailpit: {condition: service_started}
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
       interval: 5s
       timeout: 3s
       retries: 40
+  mailpit:
+    profiles: [core]
+    image: axllent/mailpit:v1.27.8@sha256:6abc8e633df15eaf785cfcf38bae48e66f64beecdc03121e249d0f9ec15f0707
+    ports: ["127.0.0.1:${MAILPIT_HOST_PORT:-8025}:8025"]
   realtime-api:
     profiles: [core]
     build:

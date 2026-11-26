@@ -3,14 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, map, of, startWith, switchMap, Subject } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { AuthPanel } from './auth-panel';
 @Component({
   selector: 'app-root',
-  imports: [ReactiveFormsModule, AsyncPipe],
+  imports: [ReactiveFormsModule, AsyncPipe, AuthPanel],
   template: `
     <main>
       <p class="eyebrow">DOCKVUE / CREATOR</p>
       <h1>제작자 개발 환경</h1>
-      <p>Phase 01 · 초기 연결 상태 확인</p>
+      <p>Phase 02 · 인증 및 채널 관리</p>
       <button (click)="refresh.next()">Core API 연결 확인</button>
       <p role="status">{{ status$ | async }}</p>
       <label>영상 제목 (폼 검증 예제)
@@ -18,6 +19,7 @@ import { AsyncPipe } from '@angular/common';
       </label>
       <p>{{ title.valid ? '입력 검증 통과' : '제목 1~120자 필요' }}</p>
       <p>저장 및 콘텐츠 관리 기능은 Phase 03에서 구현합니다.</p>
+      <auth-panel />
     </main>`
 })
 export class App {

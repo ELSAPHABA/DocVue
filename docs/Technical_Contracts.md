@@ -53,7 +53,7 @@
 - 모든 리소스 식별자와 클라이언트 입력 검증. 비밀·토큰·signed URL 로그 금지.
 
 ## 4. 인증/인가
-- 자체 Spring Security 인증, BCrypt 또는 Argon2id(벤치 후 기본 Argon2id), 이메일 정규화/unique, 이메일 확인 전 제작 권한 없음.
+- 자체 Spring Security 인증, Phase 02 Argon2id(메모리 32 MiB, 반복 3, 병렬도 1, salt 16 bytes, hash 32 bytes), 이메일 정규화/unique, 이메일 확인 전 제작 권한 없음. 파라미터의 운영 부하 튜닝은 후속 검증 대상.
 - 짧은 JWT RS256 access (10분, iss/aud/sub/exp/jti), 서버 저장된 hashed opaque refresh (30일 절대 만료), refresh family rotation·재사용 검출. JWT key rollover JWKS. Web access는 메모리, refresh는 Secure HttpOnly SameSite=Lax cookie /api/v1/auth; same-origin gateway, Origin 검증 + CSRF token for cookie mutations. 외부 CLI는 Phase 08 browser device authorization 또는 짧은 일회성 코드 교환, keychain에 refresh 저장. 토큰을 URL/명령줄에 넣지 않음.
 - refresh transaction row lock/CAS; client single-flight, 네트워크 응답 유실은 재로그인 허용, 이미 사용한 refresh replay 시 family revoke. logout revoke refresh family, access는 최대 TTL까지 유효. 민감 다운로드/발행은 DB 현재 권한 재확인.
 - public: anonymous playback, authenticated lab download. unlisted: video link로 탐색/재생 가능(비밀보장 아님), lab download 인증 필요. private: membership 또는 명시 grant 필요. 동일 video 내 published Phase·release는 동일 권한.

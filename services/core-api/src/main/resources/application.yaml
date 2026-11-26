@@ -7,6 +7,8 @@ spring:
     redis:
       host: ${REDIS_HOST:127.0.0.1}
       port: ${REDIS_PORT:6379}
+      timeout: 2s
+      connect-timeout: 2s
   datasource:
     url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:3306/dockvue?connectionTimeZone=UTC}
     username: ${MYSQL_USER:dockvue}
@@ -17,6 +19,29 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${SMTP_AUTH:false}
+      mail.smtp.starttls.enable: ${SMTP_TLS:false}
+      mail.smtp.starttls.required: ${SMTP_TLS:false}
+      mail.smtp.connectiontimeout: 3000
+      mail.smtp.timeout: 3000
+      mail.smtp.writetimeout: 3000
+dockvue:
+  auth:
+    dev: ${AUTH_DEV:false}
+    secure-cookie: ${AUTH_SECURE_COOKIE:true}
+    origins: ${AUTH_ORIGINS:}
+    private-key: ${AUTH_PRIVATE_KEY:}
+    public-key: ${AUTH_PUBLIC_KEY:}
+    previous-public-key: ${AUTH_PREVIOUS_PUBLIC_KEY:}
+    issuer: ${AUTH_ISSUER:dockvue}
+    audience: ${AUTH_AUDIENCE:dockvue-api}
+    mail-from: ${SMTP_FROM:no-reply@dockvue.local}
 management:
   endpoints:
     web:

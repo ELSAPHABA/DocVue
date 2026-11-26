@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useStatus } from './status';
+import AuthPanel from './AuthPanel.vue';
 const status = useStatus();
 onMounted(() => status.refresh());
 </script>
@@ -8,10 +9,11 @@ onMounted(() => status.refresh());
   <main>
     <p class="eyebrow">DOCKVUE / LEARNER</p>
     <h1>학습자 개발 환경</h1>
-    <p>Phase 01 · 초기 연결 상태 확인</p>
+    <p>Phase 02 · 인증 및 채널 참여</p>
     <button :disabled="status.loading" @click="status.refresh()">Core API 연결 확인</button>
     <p role="status">{{ status.message }}</p>
     <p>영상 탐색 및 Phase 실습은 후속 개발 단계에서 제공됩니다.</p>
+    <AuthPanel />
   </main>
 </template>
 <style>

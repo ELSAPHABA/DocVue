@@ -1,4 +1,4 @@
-name: Phase 01 CI
+name: DockVue CI
 on:
   push:
     branches: [main]
@@ -49,6 +49,10 @@ jobs:
       - run: python3 scripts/smoke.py
       - run: npm ci --no-audit --no-fund
       - run: python3 scripts/smoke-frontends.py
+      - run: python3 scripts/auth-integration.py
+        env:
+          DOCKVUE_TEST_ALLOW_DB_FIXTURES: '1'
+          DOCKVUE_TEST_REDIS_OUTAGE: '1'
       - if: failure()
         run: docker compose --profile core logs --no-color --tail 200
       - if: always()

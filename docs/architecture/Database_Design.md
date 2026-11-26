@@ -2,6 +2,8 @@
 
 MySQL 8.4, InnoDB, utf8mb4, UTC DATETIME(6), UUID CHAR(36) ascii_bin (v4 generated server; optimize binary representation only after measurements). Flyway migrations; ddl-auto=validate except isolated tests. Logical schema below; migration code in Phase 01–03.
 
+Phase 02 실제 인증 스키마는 V2__identity.sql을 기준으로 한다. users, tenants, memberships, email_verifications, refresh_families, refresh_tokens, invitations, idempotency_keys, audit_events를 추가했다. refresh_families 행 잠금으로 회전과 재사용 폐기를 직렬화하며, 토큰 원문은 저장하지 않는다. 영상 및 콘텐츠 테이블은 Phase 03 이후에 구현한다. [인증 설계](Phase_02_Identity.md).
+
 ~~~mermaid
 erDiagram
   USERS ||--o{ MEMBERSHIPS : has
