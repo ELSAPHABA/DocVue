@@ -23,7 +23,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - run: bash scripts/bootstrap-gradle.sh --no-daemon check
+      - uses: gradle/actions/wrapper-validation@v4
+      - run: ./gradlew --no-daemon check :services:core-api:bootJar :services:realtime-api:bootJar
   frontend:
     runs-on: ubuntu-24.04
     steps:
@@ -31,7 +32,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: npm run build
       - run: npm test
   smoke:
@@ -39,10 +40,15 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - run: cp .env.example .env
       - run: docker compose --profile core config --quiet
       - run: docker compose --profile core up -d --build --wait --wait-timeout 300
-      - run: bash scripts/smoke.sh
+      - run: python3 scripts/smoke.py
+      - run: npm ci --no-audit --no-fund
+      - run: python3 scripts/smoke-frontends.py
       - if: failure()
         run: docker compose --profile core logs --no-color --tail 200
       - if: always()

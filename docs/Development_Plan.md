@@ -1,6 +1,6 @@
 # DockVue 개발 계획 — Phase 00–15
 
-기준: 2026-11-26 / 상태: Phase 00 설계 승인 및 종료, Phase 01 착수 가능(미착수). 제품 코드 미작성.
+기준: 2026-11-26 / 상태: Phase 00 승인 및 Phase 01 개발 환경 구현·로컬 검증 완료. Phase 02 미착수.
 상위 제품 요구사항: [기능명세서](Function_Spicification.md). 세부 계약: [Technical Contracts](Technical_Contracts.md).
 여기서 개발 Phase는 영상 내 학습 Phase와 구분한다. 기능 우선순위 P0/P1/P2와도 별개이다.
 
@@ -27,11 +27,21 @@
 
 - [x] 기능명세 분석, 개발 로드맵 및 기술 계약 작성
 - [x] D00-01~08 권장안 사용자 승인 및 문서 반영 ([확정 계약](Technical_Contracts.md))
-- [ ] Phase 01: 정확한 버전 고정, 빌드 및 정식 OpenAPI/JSON Schema 검증
+- [x] Phase 01: 핵심 의존성 및 이미지 고정, 빌드 및 정식 OpenAPI/JSON Schema 검증
 - [ ] Phase 08: 지원 OS/아키텍처 실기기 검증
 - [ ] Phase 11: AWS 비용/배치 승인 및 실제 복구 검증
 
-설계 게이트 통과. Phase 01~15 미착수.
+설계 게이트 통과.
+
+## Phase 01 종료 기록
+
+- [x] Monorepo, Spring MVC/WebFlux, Angular/Vue, Compose 및 LocalStack 초기 구현
+- [x] Gradle Wrapper/Lockfile, npm Lockfile, OCI base image digest 적용
+- [x] 초기 Linux CI 4개 Job 통과, Windows HongDev Java 및 프런트엔드 빌드/테스트와 계약 검증
+- [x] 로컬 Docker 통합 smoke, 개발 서버 API proxy 및 포트 충돌 해결
+- [x] 재현 절차와 실제 트러블슈팅 기록: [Bootstrap](architecture/Phase_01_Bootstrap.md), [TS-01](troubleshooting/TS-01-windows-port-exclusion.md)
+
+Phase 01 로컬 게이트 통과. 최종 변경의 GitHub Actions 결과는 해당 커밋에서 독립적으로 확인한다. Phase 02~15 미착수; 후속 기능 및 AWS 자원 생성은 승인된 개발 범위에 따라 진행한다.
 
 ## 개발 운영 규칙
 - AI-DLC: 요구사항 → 설계/대안 → 사용자 검토 → 구현 → 테스트 → 문제 분석 → 문서 → Gate. 명시된 변경만 구현한다.

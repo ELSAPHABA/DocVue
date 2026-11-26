@@ -41,7 +41,7 @@
 - Gradle root settings + convention plugins; Java package io.dockvue.{core,realtime,media,registry}; 도메인/응용/어댑터 모듈 분리. shared DTO는 계약 스키마에서 생성/검증하되 JPA entity 공유 금지.
 - core-api만 MySQL 업무 데이터 변경. worker는 내부 인증된 job claim/heartbeat/complete API를 통해 변경; realtime은 영속 이벤트 읽기/구독, Mongo append와 Redis pub/sub 담당. 서비스 간 직접 DB 갱신 금지.
 - local Compose profiles: core, media, registry, observability; 기본 인프라 MySQL/Mongo/Redis 및 AWS emulator는 검증용. AWS 실동작(특히 multipart, IAM, CDN, SQS)은 별도 통합 테스트. 직접 클라우드 생성은 Phase 11 승인 후.
-- API 8080, realtime 8081, CMS 4200, learner 5173, registry 5000은 로컬 기본값; DB port 외부 미노출 기본. health readiness/liveness 분리. 외부는 HTTPS 443.
+- API 8080, realtime 8081, CMS 4200, learner 5173, LocalStack 4566, registry 5000(후속)은 로컬 기본값. Phase 01에서는 OS 예약·충돌 포트 대응을 위해 .env의 CORE_HOST_PORT, REALTIME_HOST_PORT, ADMIN_HOST_PORT, LEARNER_HOST_PORT, LOCALSTACK_HOST_PORT로 호스트 포트만 변경한다. 컨테이너 포트 및 서비스 DNS는 유지하며 loopback에만 노출한다. DB port 외부 미노출 기본. health readiness/liveness 분리. 외부는 HTTPS 443. 상세: [Phase 01 Bootstrap](architecture/Phase_01_Bootstrap.md), [TS-01](troubleshooting/TS-01-windows-port-exclusion.md).
 
 ## 3. 공통 API
 - REST /api/v1, JSON UTF-8, camelCase, UTC RFC3339, UUID 문자열, 시간축 integer milliseconds. DB UTC datetime(6), 영상 구간 [startMs,endMs).
@@ -95,4 +95,4 @@
 - initial caps: 20 phases/video, 1 GiB compressed bundle (media/OCI archive separately), 5 GiB total compressed image archive per phase, 4 CPU/8 GiB memory/20 GiB lab suggested; limits configurable, actual per phase requirements recorded.
 - SLO candidates: API p95 <=300ms under recorded 100 virtual user workload, VOD startup p95 <=3s in defined network, SSE p95 <=1s, clean restore 100% supported matrix, no duplicate published release, tenant isolation 100%. No measurements yet.
 - log correlation traceId/eventId/jobId, JSON, no secrets. Prometheus/Grafana + CloudWatch; alert DLQ>0, outbox age>60s, worker failure, disk>80%; adjust after baseline. backups RPO 24h/RTO 4h initial targets, restore drill before public.
-- D00-01~08 승인 완료. 정확한 patch 및 정식 스키마/빌드 검증(Phase 01), 지원 OS 검증(Phase 08), 실제 AWS 예산/배치/복구 검증(Phase 11)은 미수행. No AWS spend/deployment or feature code in Phase 00.
+- D00-01~08 승인 완료. Phase 01 초기 기술 버전·lockfile·base image digest 고정 및 정식 스키마/빌드/로컬 통합 검증은 [Bootstrap 기록](architecture/Phase_01_Bootstrap.md) 참조. 후속 기술(OpenAPI 런타임 라이브러리, Testcontainers, BlockHound, Terraform 등)은 해당 도입 시점에 호환성 및 버전 고정 검증. CLI 지원 OS 검증(Phase 08), 실제 AWS 예산/배치/복구 검증(Phase 11)은 미수행. No AWS spend/deployment in Phase 00–01.

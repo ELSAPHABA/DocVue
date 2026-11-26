@@ -4,7 +4,22 @@
 
 영상의 학습 구간(Phase)마다 실행 가능한 컨테이너 환경과 AI 실습 지침을 연결하는 개발자 교육 플랫폼입니다. 시청자는 원하는 구간의 Docker 환경을 로컬에 복원하고, 자신의 AI 도구로 실습하며 검증 결과를 확인할 수 있습니다.
 
-> **개발 상태: Phase 00 설계 승인 완료** — Phase 01 구현 착수 전이며, 아래 구성은 구현 목표입니다. [개발 계획](docs/Development_Plan.md) · [확정 기술 계약](docs/Technical_Contracts.md)
+> **개발 상태: Phase 01 개발 환경 구현 및 로컬 검증 완료** — Spring MVC/WebFlux, Angular/Vue, Docker Compose, LocalStack의 초기 골격이 동작합니다. 아래 제품 기능은 후속 구현 목표입니다. [개발 계획](docs/Development_Plan.md) · [확정 기술 계약](docs/Technical_Contracts.md)
+
+## 로컬 개발
+
+Java 21, Node.js 24, Python 3.10+ 및 Docker Compose 필요. Windows에서는 Conda 환경을 활성화한 후 실행할 수 있습니다.
+
+~~~powershell
+conda activate HongDev
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+docker compose --profile core up -d --build --wait
+npm ci
+python scripts/smoke.py
+python scripts/smoke-frontends.py
+~~~
+
+`npm run dev:admin` / `npm run dev:learner`는 별도 터미널에서 실행합니다. Windows 포트 예약과 충돌하면 `.env`의 호스트 포트를 조정합니다. [실행·검증 상세](docs/architecture/Phase_01_Bootstrap.md) · [TS-01 포트 충돌 해결](docs/troubleshooting/TS-01-windows-port-exclusion.md).
 
 ## 핵심 기능
 

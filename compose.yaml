@@ -1,7 +1,7 @@
 name: dockvue
 services:
   mysql:
-    image: mysql:8.4
+    image: mysql:8.4@sha256:8c233bad33d520a7aae1c1e619c3a9775f4a1ba2d463d692fada04ec7f40be00
     environment:
       MYSQL_DATABASE: dockvue
       MYSQL_USER: dockvue
@@ -14,7 +14,7 @@ services:
       timeout: 5s
       retries: 30
   mongo:
-    image: mongo:8.0
+    image: mongo:8.0@sha256:479e85ced54ffb8a40dade1dcde2da2a9ae858515b9415e9cc54bfb8f0575d01
     volumes: [mongo-data:/data/db]
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
@@ -22,20 +22,20 @@ services:
       timeout: 5s
       retries: 30
   redis:
-    image: redis:8.2
+    image: redis:8.2@sha256:bb302517211721bf85ae3152b663c848a7cb36e79b02d69239ce20b5ddce95be
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 30
   localstack:
-    image: localstack/localstack:4.12.0
+    image: localstack/localstack:4.12.0@sha256:0df3a97da57de03a588c05d9b8f390f15c7033fc7c4512f94619d344bc3cd317
     environment:
       SERVICES: s3,sqs
       AWS_DEFAULT_REGION: ap-northeast-2
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
-    ports: ["127.0.0.1:4566:4566"]
+    ports: ["127.0.0.1:${LOCALSTACK_HOST_PORT:-4566}:4566"]
     volumes:
       - ./infra/docker/localstack/init.sh:/etc/localstack/init/ready.d/10-dockvue.sh:ro
     healthcheck:
@@ -54,7 +54,7 @@ services:
       MYSQL_USER: dockvue
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?copy .env.example to .env}
       REDIS_HOST: redis
-    ports: ["127.0.0.1:8080:8080"]
+    ports: ["127.0.0.1:${CORE_HOST_PORT:-8080}:8080"]
     depends_on:
       mysql: {condition: service_healthy}
       redis: {condition: service_healthy}
@@ -72,7 +72,7 @@ services:
     environment:
       MONGO_URI: mongodb://mongo:27017/dockvue
       REDIS_HOST: redis
-    ports: ["127.0.0.1:8081:8081"]
+    ports: ["127.0.0.1:${REALTIME_HOST_PORT:-8081}:8081"]
     depends_on:
       mongo: {condition: service_healthy}
       redis: {condition: service_healthy}

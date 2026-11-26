@@ -22,7 +22,7 @@
           "builder": "@angular/build:dev-server",
           "options": {
             "buildTarget": "creator-admin:build",
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.cjs"
           }
         },
         "test": {
