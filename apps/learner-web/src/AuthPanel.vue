@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { AuthClient, type Profile, type Tenant } from '../../../packages/api-contracts/auth-client';
-const client=new AuthClient();
+import { browserAuth, type Profile, type Tenant } from '../../../packages/api-contracts/auth-client';
+const client=browserAuth;
+const emit=defineEmits<{profile:[Profile|null]}>();
 const profile=ref<Profile|null>(null),tenants=ref<Tenant[]>([]),busy=ref(false),message=ref('');
 const email=ref(''),password=ref(''),code=ref(''),invite=ref('');
-async function reload(){profile.value=await client.me();tenants.value=await client.tenants()}
+async function reload(){profile.value=await client.me();tenants.value=await client.tenants();emit('profile',profile.value)}
 async function run(action:string){
   if(busy.value)return;busy.value=true;
   try{
@@ -14,7 +15,7 @@ async function run(action:string){
       case 'verify':await client.verify(code.value);code.value='';if(profile.value)await reload();break;
       case 'login':try{await client.login(email.value,password.value)}finally{password.value=''}await reload();break;
       case 'resume':await client.refresh();await reload();break;
-      case 'logout':try{await client.logout()}finally{profile.value=null;tenants.value=[]}break;
+      case 'logout':try{await client.logout()}finally{profile.value=null;tenants.value=[];emit('profile',null)}break;
       case 'accept':await client.accept(invite.value);invite.value='';await reload();break;
     }
     message.value='완료';

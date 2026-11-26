@@ -34,6 +34,21 @@ public class TenantService {
     }
     public void requireMember(String actor,String tenant) { membership(actor,tenant,Role.LEARNER); }
     public void requireAdmin(String actor,String tenant) { membership(actor,tenant,Role.TENANT_ADMIN); }
+    public void requireActive(String actor) { identity.current(actor); }
+    public boolean canManageAll(String actor,String tenant) {
+        Member m=membership(actor,tenant,Role.CREATOR);
+        IdentityService.User u=identity.current(actor);
+        if(!u.verified()||!u.approved())throw ApiError.forbidden();
+        return m.role()==Role.TENANT_ADMIN;
+    }
+    // Caller must own the transaction. Lock order tenant -> actor -> video.
+    public boolean lockCreator(String actor,String tenant) {
+        lockTenant(tenant);
+        IdentityService.User u=identity.lockCurrent(actor);
+        Member m=membership(actor,tenant,Role.CREATOR);
+        if(!u.verified()||!u.approved())throw ApiError.forbidden();
+        return m.role()==Role.TENANT_ADMIN;
+    }
     List<Tenant> list(String actor) {
         identity.current(actor);
         return db.query("SELECT t.id,t.slug,t.name,t.status,t.version,m.role FROM tenants t JOIN memberships m ON t.id=m.tenant_id WHERE m.user_id=? AND m.status='ACTIVE' AND t.status='ACTIVE' ORDER BY t.id LIMIT 100",

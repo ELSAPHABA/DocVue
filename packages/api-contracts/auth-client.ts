@@ -61,6 +61,15 @@ export class AuthClient {
     if(r.status===401){if(this.access===sent||!this.access)await this.refresh();r=await call()}
     return read<T>(r);
   }
+  async publicRequest<T>(path:string,authenticated=false,signal?:AbortSignal):Promise<T> {
+    if(authenticated&&!this.access)await this.refresh();
+    const sent=this.access;
+    const call=()=>fetch('/api/v1'+path,{signal,cache:'no-store',credentials:'same-origin',
+      headers:authenticated&&this.access?{Authorization:'Bearer '+this.access}:{}});
+    let r=await call();
+    if(authenticated&&r.status===401&&!signal?.aborted){if(this.access===sent||!this.access)await this.refresh();r=await call()}
+    return read<T>(r);
+  }
   me(){return this.request<Profile>('/me')}
   tenants(){return this.request<Tenant[]>('/tenants')}
   create(name:string,slug:string,key:string){return this.request<Tenant>('/tenants','POST',{name,slug},{'Idempotency-Key':key})}
@@ -71,3 +80,4 @@ export class AuthClient {
     return this.request<Member>('/tenants/'+id+'/members/'+m.userId,'PUT',{role,status},{'If-Match':'"'+m.version+'"'})
   }
 }
+export const browserAuth=new AuthClient();

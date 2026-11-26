@@ -4,6 +4,8 @@ MySQL 8.4, InnoDB, utf8mb4, UTC DATETIME(6), UUID CHAR(36) ascii_bin (v4 generat
 
 Phase 02 실제 인증 스키마는 V2__identity.sql을 기준으로 한다. users, tenants, memberships, email_verifications, refresh_families, refresh_tokens, invitations, idempotency_keys, audit_events를 추가했다. refresh_families 행 잠금으로 회전과 재사용 폐기를 직렬화하며, 토큰 원문은 저장하지 않는다. 영상 및 콘텐츠 테이블은 Phase 03 이후에 구현한다. [인증 설계](Phase_02_Identity.md).
 
+Phase 03 실제 V3__content.sql: videos(@Version), video_repositories(영상당 unique), video_labels(정규화 tag/stack), phases(tenant/video composite FK, ordinal/range 제약), preview_progress(본인·video version 기반 학습 시작 위치). 현재 preview_progress는 future release-bound progress/playback_progress를 대체하지 않으며, media_versions/releases 및 관련 pointer는 후속 Phase에서 추가한다. [콘텐츠 설계](Phase_03_Content.md).
+
 ~~~mermaid
 erDiagram
   USERS ||--o{ MEMBERSHIPS : has

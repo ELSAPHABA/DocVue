@@ -53,6 +53,19 @@ jobs:
         env:
           DOCKVUE_TEST_ALLOW_DB_FIXTURES: '1'
           DOCKVUE_TEST_REDIS_OUTAGE: '1'
+      - run: npx playwright install --with-deps chromium
+      - run: docker compose exec -T redis redis-cli FLUSHDB
+      - run: npx playwright test
+        env:
+          DOCKVUE_TEST_ALLOW_DB_FIXTURES: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-phase03
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
       - if: failure()
         run: docker compose --profile core logs --no-color --tail 200
       - if: always()

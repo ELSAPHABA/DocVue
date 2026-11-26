@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthClient, Profile, Tenant, Member, Role } from '../../../packages/api-contracts/auth-client';
+import { browserAuth, Profile, Tenant, Member, Role } from '../../../packages/api-contracts/auth-client';
 
 @Component({
   selector:'auth-panel',
@@ -51,7 +51,7 @@ import { AuthClient, Profile, Tenant, Member, Role } from '../../../packages/api
   </section>`
 })
 export class AuthPanel {
-  private client=new AuthClient();
+  private client=browserAuth;
   profile=signal<Profile|null>(null); tenants=signal<Tenant[]>([]); members=signal<Member[]>([]);
   selected=signal<Tenant|null>(null); busy=signal(false); message=signal('');
   email='';password='';code='';invitation='';name='';slug='';inviteEmail='';role:Role='LEARNER';

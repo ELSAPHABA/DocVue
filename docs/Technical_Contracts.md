@@ -44,6 +44,7 @@
 - API 8080, realtime 8081, CMS 4200, learner 5173, LocalStack 4566, registry 5000(후속)은 로컬 기본값. Phase 01에서는 OS 예약·충돌 포트 대응을 위해 .env의 CORE_HOST_PORT, REALTIME_HOST_PORT, ADMIN_HOST_PORT, LEARNER_HOST_PORT, LOCALSTACK_HOST_PORT로 호스트 포트만 변경한다. 컨테이너 포트 및 서비스 DNS는 유지하며 loopback에만 노출한다. DB port 외부 미노출 기본. health readiness/liveness 분리. 외부는 HTTPS 443. 상세: [Phase 01 Bootstrap](architecture/Phase_01_Bootstrap.md), [TS-01](troubleshooting/TS-01-windows-port-exclusion.md).
 
 ## 3. 공통 API
+- Phase 03 콘텐츠 API와 구현 기준: [Phase_03_Content.md](architecture/Phase_03_Content.md), [ADR-0007](adr/0007-content-preview-and-concurrency.md). 타임라인 변경은 video aggregate ETag를 사용하는 원자적 전체 PUT으로 제공한다. 공개 미리보기는 opt-in metadata 전용이며 실제 PUBLISHED/Release 또는 재생과 구별한다.
 - REST /api/v1, JSON UTF-8, camelCase, UTC RFC3339, UUID 문자열, 시간축 integer milliseconds. DB UTC datetime(6), 영상 구간 [startMs,endMs).
 - [OpenAPI v1](api/openapi.yaml)은 Phase 01–10의 주요 외부 계약. 기재되지 않은 회원·관리·내부 API는 해당 개발 Phase 전에 추가. incompatible 변경은 새 major path/schema; optional field 추가 허용.
 - RFC 9457 Problem Details: type, title, status, detail, instance, code, traceId, errors[]; 400 syntax, 401 invalid auth, 403 known forbidden action, 404 cross-tenant/hidden, 409 state conflict, 412 stale If-Match, 422 invalid input, 429 with Retry-After, 503 transient.

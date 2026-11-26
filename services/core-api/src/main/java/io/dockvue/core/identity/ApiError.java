@@ -13,12 +13,12 @@ import java.io.IOException;
 public final class ApiError extends RuntimeException {
     final int status;
     final String code;
-    ApiError(int status, String code) { super(code); this.status = status; this.code = code; }
-    static ApiError bad(String code) { return new ApiError(422, code); }
-    static ApiError missing() { return new ApiError(404, "NOT_FOUND"); }
-    static ApiError forbidden() { return new ApiError(403, "FORBIDDEN"); }
-    static ApiError unauthorized() { return new ApiError(401, "UNAUTHENTICATED"); }
-    static String trace(HttpServletRequest r) {
+    public ApiError(int status, String code) { super(code); this.status = status; this.code = code; }
+    public static ApiError bad(String code) { return new ApiError(422, code); }
+    public static ApiError missing() { return new ApiError(404, "NOT_FOUND"); }
+    public static ApiError forbidden() { return new ApiError(403, "FORBIDDEN"); }
+    public static ApiError unauthorized() { return new ApiError(401, "UNAUTHENTICATED"); }
+    public static String trace(HttpServletRequest r) {
         Object id = r.getAttribute("dockvue.trace");
         return id == null ? UUID.randomUUID().toString() : id.toString();
     }
@@ -56,5 +56,9 @@ class IdentityErrors {
     @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
     ResponseEntity<ProblemDetail> mismatch(HttpServletRequest r) {
         return ResponseEntity.badRequest().body(ApiError.detail(400, "INVALID_INPUT", r));
+    }
+    @ExceptionHandler({org.springframework.dao.OptimisticLockingFailureException.class,jakarta.persistence.OptimisticLockException.class})
+    ResponseEntity<ProblemDetail> stale(HttpServletRequest r) {
+        return ResponseEntity.status(412).body(ApiError.detail(412,"STALE_VERSION",r));
     }
 }

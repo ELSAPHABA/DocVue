@@ -1,6 +1,6 @@
 # DockVue 개발 계획 — Phase 00–15
 
-기준: 2026-11-26 / 상태: Phase 00 승인, Phase 01 구현·CI 검증 완료, Phase 02 구현·로컬 통합 검증 완료. Phase 03 미착수.
+기준: 2026-11-26 / 상태: Phase 00 승인, Phase 01–02 구현·CI 검증 완료, Phase 03 구현 및 Docker 내부 headless E2E 검증 완료. Phase 04 미착수.
 상위 제품 요구사항: [기능명세서](Function_Spicification.md). 세부 계약: [Technical Contracts](Technical_Contracts.md).
 여기서 개발 Phase는 영상 내 학습 Phase와 구분한다. 기능 우선순위 P0/P1/P2와도 별개이다.
 
@@ -41,7 +41,17 @@
 - [x] 로컬 Docker 통합 smoke, 개발 서버 API proxy 및 포트 충돌 해결
 - [x] 재현 절차와 실제 트러블슈팅 기록: [Bootstrap](architecture/Phase_01_Bootstrap.md), [TS-01](troubleshooting/TS-01-windows-port-exclusion.md)
 
-Phase 01 로컬 게이트 및 GitHub Actions 4/4 통과. Phase 02 로컬 게이트 통과(인증·인가 통합 11개 시나리오 그룹 및 Redis 장애 검증). 새 커밋의 GitHub Actions 결과는 별도로 확인한다. Phase 03~15 미착수; 후속 기능 및 AWS 자원 생성은 승인된 개발 범위에 따라 진행한다. [Phase 02 검증 및 제한](architecture/Phase_02_Identity.md).
+Phase 01 로컬 게이트 및 GitHub Actions 4/4 통과. Phase 02 로컬 게이트와 [GitHub Actions 4/4](https://github.com/ELSAPHABA/DocVue/actions/runs/45762333038) 통과. [Phase 02 검증 및 제한](architecture/Phase_02_Identity.md).
+
+## Phase 03 종료 기록
+
+- [x] V3 migration, JPA Video @Version, 논리 repo 예약, Phase 타임라인, scope-bound cursor와 metadata preview
+- [x] Angular CMS / Vue learner portal, 공통 디자인 시스템, 검색 및 학습 시작 위치 저장
+- [x] Java/npm 및 OpenAPI 검증, Docker 내부 Playwright Chromium headless 종합 시나리오 통과
+- [x] 실제 MySQL EXPLAIN, 1440px/390px 화면 캡처, Windows 연결 reset 장애 기록
+- [x] [콘텐츠 설계](architecture/Phase_03_Content.md), [ADR-0007](adr/0007-content-preview-and-concurrency.md), [TS-03](troubleshooting/TS-03-content-query-and-browser-transport.md)
+
+Phase 03 로컬 기능 검증 완료; Windows 호스트 전체 E2E는 연결 reset으로 실패했으므로 Docker 내부 검증과 구별한다. 최종 커밋 CI는 별도 확인. Phase 04–15 미착수; 실제 미디어/Release는 후속 단계, AWS 비용 및 배포는 별도 승인.
 
 ## 개발 운영 규칙
 - AI-DLC: 요구사항 → 설계/대안 → 사용자 검토 → 구현 → 테스트 → 문제 분석 → 문서 → Gate. 명시된 변경만 구현한다.

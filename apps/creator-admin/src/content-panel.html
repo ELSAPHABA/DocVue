@@ -1,0 +1,57 @@
+<section class="panel workspace">
+  <div class="section-head"><div><p class="eyebrow">CONTENT STUDIO</p><h2>콘텐츠 관리</h2></div><span class="pill">Phase 03</span></div>
+  @if (!profile()) {<p class="muted">계정 패널에서 로그인하면 콘텐츠를 관리할 수 있습니다.</p>}
+  @else if (!profile()?.creatorApproved || !profile()?.emailVerified) {<p class="notice">이메일 인증 및 플랫폼 제작자 승인이 필요합니다. 채널 관리자 권한만으로 콘텐츠를 발행할 수 없습니다.</p>}
+  @else {
+    <label>관리할 채널<select data-testid="tenant-select" [ngModel]="tenant()" (ngModelChange)="selectTenant($event)" [disabled]="busy()"><option value="">채널 선택</option>@for (t of tenants();track t.id) {@if (t.role!=='LEARNER') {<option [value]="t.id">{{t.name}}</option>}}</select></label>
+    @if (tenant()) {
+      <div class="toolbar"><button class="primary" (click)="begin()" [disabled]="busy()">새 영상</button><button (click)="load()" [disabled]="loading()||busy()">목록 새로고침</button></div>
+      @if (loading()) {<p class="muted">불러오는 중…</p>}
+      @if (!items().length&&!loading()) {<p class="muted">등록한 영상이 없습니다.</p>}
+      <div class="video-list">@for (v of items();track v.id) {<button class="video-row" [disabled]="busy()" (click)="open(v)"><strong>{{v.title}}</strong><span>{{v.visibility}} · {{v.phaseCount}} Phases · {{v.previewEnabled?'미리보기 공개':'초안'}}</span></button>}</div>
+      @if (next()) {<button (click)="load(next()!)" [disabled]="loading()||busy()">더 보기</button>}
+      @if (editor()) {
+        <div class="editor">
+          <div class="section-head"><h3>{{detail()?'영상 편집':'새 영상 등록'}}</h3>@if (detail()) {<span class="pill">v{{detail()?.video?.version}}</span>}</div>
+          <form [formGroup]="metadata" (ngSubmit)="save()">
+            <fieldset class="form-fields" [disabled]="busy()">
+            <label>영상 제목<input formControlName="title" data-testid="video-title" maxlength="120"></label>
+            <label>영상 설명<textarea formControlName="description" rows="3"></textarea></label>
+            <div class="field-grid">
+              <label>공개 범위<select formControlName="visibility"><option>PRIVATE</option><option>UNLISTED</option><option>PUBLIC</option></select></label>
+              <label>난이도<select formControlName="difficulty"><option>BEGINNER</option><option>INTERMEDIATE</option><option>ADVANCED</option></select></label>
+              <label>예상 영상 길이 (ms)<input type="number" formControlName="durationMs" min="1" max="14400000"></label>
+              <label>태그 (쉼표 구분)<input formControlName="tags"></label>
+              <label>기술 스택 (쉼표 구분)<input formControlName="stack"></label>
+            </div>
+            <button class="primary" type="submit" [disabled]="busy()||metadata.invalid">메타데이터 저장</button>
+            </fieldset>
+          </form>
+          @if (detail()) {
+            <div class="toolbar"><button (click)="reload()" [disabled]="busy()">최신 버전 불러오기 (편집 내용 교체)</button><button (click)="togglePreview()" [disabled]="busy()">{{detail()?.video?.previewEnabled?'미리보기 숨기기':'메타데이터 미리보기 공개'}}</button></div>
+            <p class="notice">미리보기는 마지막으로 저장된 영상 설명과 Phase 정보만 노출합니다. 비밀정보와 정답을 포함하지 마세요. 영상 재생과 실습 환경은 아직 제공되지 않습니다.</p>
+            <label>상세 링크<input readonly [value]="'/videos/'+detail()?.video?.id"></label>
+            <div class="section-head"><h3>학습 Phase 타임라인</h3><button (click)="add()" [disabled]="busy()||phases().length>=20">Phase 추가</button></div>
+            <div class="timeline" aria-label="Phase timeline">@for(p of phases();track $index){<span>{{ $index+1 }} · {{p.startMs}}–{{p.endMs}} ms</span>}</div>
+            @for (p of phases();track $index;let i=$index) {
+              <article class="phase-editor" [attr.data-testid]="'phase-'+i">
+                <fieldset class="form-fields" [disabled]="busy()">
+                <div class="section-head"><h4>Phase {{i+1}}</h4><div class="toolbar"><button (click)="move(i,-1)" [disabled]="busy()||i===0" aria-label="위로 이동">↑</button><button (click)="move(i,1)" [disabled]="busy()||i===phases().length-1" aria-label="아래로 이동">↓</button><button class="danger" (click)="remove(i)" [disabled]="busy()">삭제</button></div></div>
+                <label>Phase 제목<input [(ngModel)]="p.title" maxlength="120"></label>
+                <div class="field-grid"><label>시작 (ms)<input type="number" [(ngModel)]="p.startMs" min="0"></label><label>종료 (ms)<input type="number" [(ngModel)]="p.endMs" min="1"></label><label>예상 실습 (분)<input type="number" [(ngModel)]="p.estimatedMinutes" min="1"></label></div>
+                <label>학습 목표<textarea [(ngModel)]="p.objective" rows="2"></textarea></label>
+                <label>선수 지식<textarea [(ngModel)]="p.prerequisites" rows="2"></textarea></label>
+                <label>시작 상태<textarea [(ngModel)]="p.startState" rows="2"></textarea></label>
+                <label>완료 기준<textarea [(ngModel)]="p.completionCriteria" rows="2"></textarea></label>
+                </fieldset>
+              </article>
+            }
+            <button class="primary" (click)="saveTimeline()" [disabled]="busy()">타임라인 저장</button>
+            <div class="archive"><label class="check"><input type="checkbox" [(ngModel)]="confirmArchive">이 영상을 보관 처리하고 미리보기를 숨깁니다.</label><button class="danger" (click)="archive()" [disabled]="busy()||!confirmArchive">영상 삭제 (보관)</button></div>
+          }
+        </div>
+      }
+    }
+  }
+  <p role="status" class="message">{{message()}}</p>
+</section>
